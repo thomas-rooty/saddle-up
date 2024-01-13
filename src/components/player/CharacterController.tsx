@@ -5,16 +5,22 @@ import { useFrame } from '@react-three/fiber'
 import { RigidBody, CapsuleCollider } from '@react-three/rapier'
 import { Sphere, useKeyboardControls } from '@react-three/drei'
 import { useCharacterStore } from '../../../stores/character.store.ts'
+import Horse from './Horse.tsx'
 
-const JUMP_FORCE = 0.5
+const JUMP_FORCE = 0.3
 const MOVEMENT_SPEED = 0.1
 const MAX_SPEED = 4
+const RUN_VEL = 1
 
 const CharacterController = () => {
   const rigidbody = useRef<any>()
   const character = useRef<any>()
   const isOnFloor = useCharacterStore((state) => state.isOnFloor)
   const setIsOnFloor = useCharacterStore((state) => state.setIsOnFloor)
+  const { horseState, setHorseState } = useCharacterStore((state) => ({
+    horseState: state.horseState,
+    setHorseState: state.setHorseState,
+  }))
 
   // Controls
   const jumpPressed = useKeyboardControls((state) => state[Controls.jump])
@@ -51,8 +57,15 @@ const CharacterController = () => {
     }
 
     rigidbody.current?.applyImpulse(impulse, true)
+
+    if (Math.abs(linvel.x) > RUN_VEL || Math.abs(linvel.z) > RUN_VEL) {
+      setHorseState('2galop')
+    } else if (horseState !== '1Idle1') {
+      setHorseState('1Idle2')
+    }
+
     if (changeRotation) {
-      character.current.rotation.y = Math.atan2(linvel.x, linvel.z)
+      character.current.rotation.y = Math.atan2(linvel.x * 2, linvel.z * 2)
     }
 
     // CAMERA FOLLOW
@@ -89,6 +102,7 @@ const CharacterController = () => {
           <Sphere castShadow receiveShadow>
             <meshStandardMaterial color="hotpink" />
           </Sphere>
+          <Horse scale={0.2} />
         </group>
       </RigidBody>
     </group>

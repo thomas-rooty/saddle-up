@@ -6,6 +6,7 @@ import { RigidBody, CapsuleCollider } from '@react-three/rapier'
 import { Sphere, useKeyboardControls } from '@react-three/drei'
 import { useCharacterStore } from '../../../stores/character.store.ts'
 import Horse from './Horse.tsx'
+import HorseFull from './HorseFull.tsx'
 
 const JUMP_FORCE = 0.3
 const MOVEMENT_SPEED = 0.1
@@ -59,9 +60,9 @@ const CharacterController = () => {
     rigidbody.current?.applyImpulse(impulse, true)
 
     if (Math.abs(linvel.x) > RUN_VEL || Math.abs(linvel.z) > RUN_VEL) {
-      setHorseState('2galop')
-    } else if (horseState !== '1Idle1') {
-      setHorseState('1Idle2')
+      setHorseState('Gallop')
+    } else if (horseState !== 'Idle') {
+      setHorseState('Idle')
     }
 
     if (changeRotation) {
@@ -102,7 +103,7 @@ const CharacterController = () => {
           <Sphere castShadow receiveShadow>
             <meshStandardMaterial color="hotpink" />
           </Sphere>
-          <Horse scale={0.2} />
+          <HorseFull scale={1} />
         </group>
       </RigidBody>
     </group>
